@@ -36,8 +36,8 @@
         .dark body { background: linear-gradient(120deg, #1a2a45 0%, #0f172a 100%); }
         @keyframes fade-in-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in-up { animation: fade-in-up 0.5s ease-out forwards; opacity: 0; }
-        #main-content { transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
-        #ai-chat-container { transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); height: 0; opacity: 0; transform: translateY(50px) scale(0.9); pointer-events: none; }
+        #main-content, #ai-chat-container { transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+        #ai-chat-container { height: 0; opacity: 0; transform: translateY(50px) scale(0.9); pointer-events: none; }
         body.ai-chat-active #main-content { opacity: 0; transform: translateY(-50px) scale(0.9); pointer-events: none; height: 0; overflow: hidden; padding-top: 0; padding-bottom: 0; }
         body.ai-chat-active #ai-chat-container { height: auto; opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
         .quick-action-card .action-content { display: none; opacity: 0; transition: all 0.3s ease-out; }
@@ -45,8 +45,7 @@
         .quick-action-card:hover .default-content { display: none; opacity: 0; }
         .modal-overlay { opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .modal-container { transform: scale(0.95) translateY(20px); opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        body.modal-open .modal-overlay { opacity: 1; visibility: visible; }
-        body.modal-open .modal-container { transform: scale(1) translateY(0); opacity: 1; visibility: visible; }
+        body.modal-open .modal-overlay, body.modal-open .modal-container { opacity: 1; visibility: visible; transform: scale(1) translateY(0); }
         .mood-emoji.selected { background-color: rgba(44, 200, 232, 0.5); transform: scale(1.1); }
 </style>
 </head>
@@ -134,6 +133,35 @@
 <div class="col-span-3 lg:col-span-1 space-y-8">
 <div class="p-8 rounded-xl backdrop-blur-xl bg-foreground-light dark:bg-foreground-dark border border-border-light dark:border-border-dark animate-fade-in-up" style="animation-delay: 0.6s;">
 <h2 class="text-2xl font-bold mb-6">Your Progress</h2>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between items-center mb-1">
+<p class="font-medium">Mindfulness</p>
+<p class="text-sm font-semibold text-primary">75%</p>
+</div>
+<div class="w-full bg-primary/20 rounded-full h-3.5">
+<div class="bg-primary h-3.5 rounded-full" style="width: 75%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-1">
+<p class="font-medium">Physical Activity</p>
+<p class="text-sm font-semibold text-primary">50%</p>
+</div>
+<div class="w-full bg-primary/20 rounded-full h-3.5">
+<div class="bg-primary h-3.5 rounded-full" style="width: 50%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-1">
+<p class="font-medium">Nutrition</p>
+<p class="text-sm font-semibold text-primary">25%</p>
+</div>
+<div class="w-full bg-primary/20 rounded-full h-3.5">
+<div class="bg-primary h-3.5 rounded-full" style="width: 25%"></div>
+</div>
+</div>
+</div>
 </div>
 <div class="p-8 rounded-xl backdrop-blur-xl bg-foreground-light dark:bg-foreground-dark border border-border-light dark:border-border-dark animate-fade-in-up" style="animation-delay: 0.8s;">
 <div class="flex items-center justify-between mb-4">
@@ -228,8 +256,10 @@
             "Gratitude journaling can significantly increase your feelings of happiness and well-being."
         ];
         const funFactContainer = document.getElementById('fun-fact-container');
-        const randomFact = funFacts[Math.floor(Math.random() * funFacts.length)];
-        funFactContainer.querySelector('p').textContent = randomFact;
+        if(funFactContainer) {
+            const randomFact = funFacts[Math.floor(Math.random() * funFacts.length)];
+            funFactContainer.querySelector('p').textContent = randomFact;
+        }
 
         // --- AI CHAT LOGIC ---
         const letsTalkButton = document.getElementById('letstalk-button');
@@ -242,9 +272,9 @@
         function openChat() { body.classList.add('ai-chat-active'); }
         function closeChat() { body.classList.remove('ai-chat-active'); }
 
-        letsTalkButton.addEventListener('click', openChat);
-        chatNavButton.addEventListener('click', (e) => { e.preventDefault(); openChat(); });
-        closeChatButton.addEventListener('click', closeChat);
+        if(letsTalkButton) letsTalkButton.addEventListener('click', openChat);
+        if(chatNavButton) chatNavButton.addEventListener('click', (e) => { e.preventDefault(); openChat(); });
+        if(closeChatButton) closeChatButton.addEventListener('click', closeChat);
 
         function addMessage(text, sender) {
             const messageElement = document.createElement('div');
@@ -253,36 +283,40 @@
                 messageElement.innerHTML = `<div class="p-3 rounded-lg rounded-tr-none bg-primary text-white max-w-lg"><p class="text-sm">${text}</p></div>`;
             } else {
                 messageElement.className = 'flex gap-3 items-start animate-fade-in-up';
-                messageElement.innerHTML = `<div class="size-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1"><span class="material-symbols-outlined text-lg text-primary">psychology</span></div><div class="p-3 rounded-lg rounded-tl-none bg-primary/10 max-w-lg"><p class="text-sm">${text}</p></div>`;
+                messageElement.innerHTML = `<div class="size-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1"><span class="material-symbols-outlined text-lg text-primary">psychology</span></div><div class="p-3 rounded-lg rounded-tl-none bg-primary/10 dark:bg-primary/20 max-w-lg"><p class="text-sm">${text}</p></div>`;
             }
-            chatMessages.appendChild(messageElement);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            if(chatMessages) {
+                chatMessages.appendChild(messageElement);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
         }
 
-        chatForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const message = chatInput.value.trim();
-            if (!message) return;
-            addMessage(message, 'user');
-            chatInput.value = '';
-            chatInput.disabled = true;
-            try {
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message }),
-                });
-                if (!response.ok) throw new Error('Network response was not ok');
-                const data = await response.json();
-                addMessage(data.reply, 'assistant');
-            } catch (error) {
-                console.error('Error:', error);
-                addMessage('Sorry, I seem to be having trouble connecting. Please try again later.', 'assistant');
-            } finally {
-                chatInput.disabled = false;
-                chatInput.focus();
-            }
-        });
+        if(chatForm) {
+            chatForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const message = chatInput.value.trim();
+                if (!message) return;
+                addMessage(message, 'user');
+                chatInput.value = '';
+                chatInput.disabled = true;
+                try {
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message }),
+                    });
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    const data = await response.json();
+                    addMessage(data.reply, 'assistant');
+                } catch (error) {
+                    console.error('Error:', error);
+                    addMessage('Sorry, I seem to be having trouble connecting. Please try again later.', 'assistant');
+                } finally {
+                    chatInput.disabled = false;
+                    chatInput.focus();
+                }
+            });
+        }
 
         // --- WIDGETS AND MODALS LOGIC ---
         function openModal(modal) { body.classList.add('modal-open'); modal.classList.remove('hidden'); }
@@ -295,49 +329,59 @@
         let meditationInterval, meditationSeconds = 300, isMeditating = false;
         
         function updateMeditationTimer() {
+            if(!meditationTimerDisplay) return;
             const minutes = Math.floor(meditationSeconds / 60).toString().padStart(2, '0');
             const seconds = (meditationSeconds % 60).toString().padStart(2, '0');
             meditationTimerDisplay.textContent = `${minutes}:${seconds}`;
         }
-        startMeditationBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            isMeditating = !isMeditating;
-            startMeditationBtn.innerHTML = `<span class="material-symbols-outlined">${isMeditating ? 'pause' : 'play_arrow'}</span>`;
-            if (isMeditating) {
-                meditationInterval = setInterval(() => {
-                    meditationSeconds--;
-                    updateMeditationTimer();
-                    if (meditationSeconds <= 0) {
-                        clearInterval(meditationInterval);
-                        isMeditating = false;
-                        meditationSeconds = 300;
+        if(startMeditationBtn) {
+            startMeditationBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                isMeditating = !isMeditating;
+                startMeditationBtn.innerHTML = `<span class="material-symbols-outlined">${isMeditating ? 'pause' : 'play_arrow'}</span>`;
+                if (isMeditating) {
+                    meditationInterval = setInterval(() => {
+                        meditationSeconds--;
                         updateMeditationTimer();
-                        startMeditationBtn.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
-                    }
-                }, 1000);
-            } else {
+                        if (meditationSeconds <= 0) {
+                            clearInterval(meditationInterval);
+                            isMeditating = false;
+                            meditationSeconds = 300;
+                            updateMeditationTimer();
+                            startMeditationBtn.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
+                        }
+                    }, 1000);
+                } else {
+                    clearInterval(meditationInterval);
+                }
+            });
+        }
+        if(resetMeditationBtn) {
+            resetMeditationBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
                 clearInterval(meditationInterval);
-            }
-        });
-        resetMeditationBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            clearInterval(meditationInterval);
-            isMeditating = false;
-            meditationSeconds = 300;
-            updateMeditationTimer();
-            startMeditationBtn.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
-        });
+                isMeditating = false;
+                meditationSeconds = 300;
+                updateMeditationTimer();
+                startMeditationBtn.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
+            });
+        }
 
         // Journaling
         const journalModal = document.getElementById('journal-modal');
         const journalTextarea = document.getElementById('journal-textarea');
-        document.getElementById('new-journal-entry').addEventListener('click', () => openModal(journalModal));
-        document.getElementById('close-journal-modal').addEventListener('click', () => closeModal(journalModal));
-        document.getElementById('save-journal-entry').addEventListener('click', () => {
+        const newJournalEntryBtn = document.getElementById('new-journal-entry');
+        const closeJournalModalBtn = document.getElementById('close-journal-modal');
+        const saveJournalEntryBtn = document.getElementById('save-journal-entry');
+        
+        if(newJournalEntryBtn) newJournalEntryBtn.addEventListener('click', () => openModal(journalModal));
+        if(closeJournalModalBtn) closeJournalModalBtn.addEventListener('click', () => closeModal(journalModal));
+        if(saveJournalEntryBtn) saveJournalEntryBtn.addEventListener('click', () => {
             const entry = journalTextarea.value;
             if (entry.trim()) {
-                // In a real app, you would save this to a list in localStorage
-                console.log('Journal entry saved:', entry);
+                let entries = JSON.parse(localStorage.getItem('thecarebud_journal')) || [];
+                entries.push({ date: new Date().toISOString(), text: entry });
+                localStorage.setItem('thecarebud_journal', JSON.stringify(entries));
                 alert('Journal entry saved!');
             }
             journalTextarea.value = '';
@@ -346,28 +390,33 @@
 
         // Hydration
         const hydrationCount = document.getElementById('hydration-count');
-        let glasses = parseInt(localStorage.getItem('thecarebud_hydration') || '0');
-        hydrationCount.textContent = glasses;
-        document.getElementById('hydration-increment').addEventListener('click', () => {
-            glasses++;
+        const hydrationIncrement = document.getElementById('hydration-increment');
+        const hydrationDecrement = document.getElementById('hydration-decrement');
+        if(hydrationCount) {
+            let glasses = parseInt(localStorage.getItem('thecarebud_hydration') || '0');
             hydrationCount.textContent = glasses;
-            localStorage.setItem('thecarebud_hydration', glasses);
-        });
-        document.getElementById('hydration-decrement').addEventListener('click', () => {
-            if (glasses > 0) {
-                glasses--;
+            hydrationIncrement.addEventListener('click', () => {
+                glasses++;
                 hydrationCount.textContent = glasses;
                 localStorage.setItem('thecarebud_hydration', glasses);
-            }
-        });
+            });
+            hydrationDecrement.addEventListener('click', () => {
+                if (glasses > 0) {
+                    glasses--;
+                    hydrationCount.textContent = glasses;
+                    localStorage.setItem('thecarebud_hydration', glasses);
+                }
+            });
+        }
 
         // Mood Tracker
-        document.querySelectorAll('.mood-emoji').forEach(emoji => {
+        const moodEmojis = document.querySelectorAll('.mood-emoji');
+        moodEmojis.forEach(emoji => {
             emoji.addEventListener('click', () => {
                 const mood = emoji.dataset.mood;
                 localStorage.setItem('thecarebud_mood_today', mood);
                 console.log(`Mood logged: ${mood}`);
-                document.querySelectorAll('.mood-emoji').forEach(e => e.classList.remove('selected'));
+                moodEmojis.forEach(e => e.classList.remove('selected'));
                 emoji.classList.add('selected');
             });
         });
@@ -382,15 +431,21 @@
         const eventTitleInput = document.getElementById('event-title');
         const eventTimeInput = document.getElementById('event-time');
         const deleteEventBtn = document.getElementById('delete-event');
+        const calendarPrevBtn = document.getElementById('calendar-prev');
+        const calendarNextBtn = document.getElementById('calendar-next');
+        const newEventBtn = document.getElementById('new-event-btn');
+        const closeEventModalBtn = document.getElementById('close-event-modal');
+        const saveEventBtn = document.getElementById('save-event');
         let currentDate = new Date();
         let events = JSON.parse(localStorage.getItem('thecarebud_events')) || {};
 
         function saveEvents() { localStorage.setItem('thecarebud_events', JSON.stringify(events)); }
         
         function generateCalendar(date) {
+            if(!calendarGrid) return;
             calendarGrid.innerHTML = '';
             const month = date.getMonth(), year = date.getFullYear();
-            monthYearDisplay.textContent = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            monthYearDisplay.textContent = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
             const firstDayOfMonth = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach(day => {
@@ -419,6 +474,7 @@
         }
 
         function showEventsForDate(date) {
+            if(!eventList) return;
             eventList.innerHTML = '';
             document.querySelectorAll('#calendar-grid div[data-date]').forEach(d => d.classList.remove('bg-primary/40'));
             document.querySelector(`[data-date='${date}']`)?.classList.add('bg-primary/40');
@@ -447,12 +503,11 @@
             }
         }
     
-        document.getElementById('calendar-prev').addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); generateCalendar(currentDate); });
-        document.getElementById('calendar-next').addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); generateCalendar(currentDate); });
-        document.getElementById('new-event-btn').addEventListener('click', () => openEventModal(new Date().toISOString().split('T')[0]));
-        document.getElementById('close-event-modal').addEventListener('click', () => closeModal(eventModal));
-
-        document.getElementById('save-event').addEventListener('click', () => {
+        if(calendarPrevBtn) calendarPrevBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); generateCalendar(currentDate); });
+        if(calendarNextBtn) calendarNextBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); generateCalendar(currentDate); });
+        if(newEventBtn) newEventBtn.addEventListener('click', () => openEventModal(new Date().toISOString().split('T')[0]));
+        if(closeEventModalBtn) closeEventModalBtn.addEventListener('click', () => closeModal(eventModal));
+        if(saveEventBtn) saveEventBtn.addEventListener('click', () => {
             const date = eventDateInput.value, id = eventIdInput.value;
             const newEvent = { id: id ? parseInt(id) : Date.now(), title: eventTitleInput.value, time: eventTimeInput.value };
             if (!events[date]) events[date] = [];
@@ -465,8 +520,7 @@
             generateCalendar(currentDate);
             showEventsForDate(date);
         });
-
-        deleteEventBtn.addEventListener('click', () => {
+        if(deleteEventBtn) deleteEventBtn.addEventListener('click', () => {
             const date = eventDateInput.value, id = parseInt(eventIdInput.value);
             events[date] = events[date].filter(e => e.id !== id);
             if (!events[date].length) delete events[date];
