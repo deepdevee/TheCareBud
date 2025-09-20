@@ -1,9 +1,5 @@
-//
-// File: /api/chat.js
-//
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-// IMPORTANT: We will set the API key in Vercel's environment variables, not here
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 export default async function handler(req, res) {
@@ -19,8 +15,20 @@ export default async function handler(req, res) {
 
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    // A simple instruction for the AI model
-    const prompt = `You are a friendly and supportive wellness assistant. Keep your answers brief and helpful. User's message: "${message}"`;
+    const prompt = `
+      You are 'Bud,' the AI wellness assistant from TheCareBud.
+      Your personality is: warm, empathetic, patient, and always encouraging. You are like a gentle, supportive friend.
+      Your goal is to provide helpful, non-judgmental wellness tips and a listening ear.
+      
+      RULES:
+      1. Keep your responses positive and supportive.
+      2. Speak in short, easy-to-understand paragraphs.
+      3. Never give medical advice. You are a wellness guide, not a doctor.
+      4. If a user mentions serious distress or wanting to harm themselves, you must gently and immediately recommend they contact a professional crisis hotline or therapist.
+      5. Address the user directly and kindly.
+
+      Now, respond to the following user message: "${message}"
+    `;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
