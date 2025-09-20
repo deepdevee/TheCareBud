@@ -285,7 +285,7 @@
                 localStorage.removeItem('thecarebud_mood_today');
             }
             chatMessages.innerHTML = '';
-            let firstMessage = "Hello! I'm your AI wellness expert. How can I help you today?";
+            let firstMessage = "Hello! I'm your wellness companion. How can I help you today?";
             switch (context) {
                 case 'Happy': firstMessage = "That's wonderful to hear! What's putting a smile on your face today?"; break;
                 case 'Neutral': firstMessage = "Thanks for checking in. Is there anything on your mind, or something you'd like to explore?"; break;
@@ -513,4 +513,13 @@
             if (!events[date].length) delete events[date];
             saveEvents();
             closeModal(eventModal);
-            generateCalendar(currentDate
+            generateCalendar(currentDate);
+            showEventsForDate(date);
+        });
+        // Initial Load
+        generateCalendar(currentDate);
+        showEventsForDate(new Date().toISOString().split('T')[0]);
+    });
+</script>
+</body>
+</html>
