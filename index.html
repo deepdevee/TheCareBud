@@ -367,7 +367,7 @@
                 isMeditating = false;
                 meditationSeconds = 300;
                 updateMeditationTimer();
-                startMeditationBtn.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
+                startMeditationBtn.innerHTML = `<span class="material-symbols-outlined">replay</span>`;
             });
         }
         const journalTextarea = document.getElementById('journal-textarea');
@@ -513,13 +513,4 @@
             if (!events[date].length) delete events[date];
             saveEvents();
             closeModal(eventModal);
-            generateCalendar(currentDate);
-            showEventsForDate(date);
-        });
-        // Initial Load
-        generateCalendar(currentDate);
-        showEventsForDate(new Date().toISOString().split('T')[0]);
-    });
-</script>
-</body>
-</html>
+            generateCalendar(currentDate
