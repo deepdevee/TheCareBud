@@ -36,16 +36,19 @@
         .dark body { background: linear-gradient(120deg, #1a2a45 0%, #0f172a 100%); }
         @keyframes fade-in-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in-up { animation: fade-in-up 0.5s ease-out forwards; opacity: 0; }
-        #main-content, #ai-chat-container { transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
-        #ai-chat-container { height: 0; opacity: 0; transform: translateY(50px) scale(0.9); pointer-events: none; }
+        @keyframes progress-animation { from { width: 0%; } }
+        .progress-bar-inner { animation: progress-animation 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        #main-content { transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+        #ai-chat-container { transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); height: 0; opacity: 0; transform: translateY(50px) scale(0.9); pointer-events: none; }
         body.ai-chat-active #main-content { opacity: 0; transform: translateY(-50px) scale(0.9); pointer-events: none; height: 0; overflow: hidden; padding-top: 0; padding-bottom: 0; }
         body.ai-chat-active #ai-chat-container { height: auto; opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
         .quick-action-card .action-content { display: none; opacity: 0; transition: all 0.3s ease-out; }
         .quick-action-card:hover .action-content { display: flex; opacity: 1; }
         .quick-action-card:hover .default-content { display: none; opacity: 0; }
-        .modal-overlay { opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .modal-overlay { display: none; opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .modal-container { transform: scale(0.95) translateY(20px); opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        body.modal-open .modal-overlay, body.modal-open .modal-container { opacity: 1; visibility: visible; transform: scale(1) translateY(0); }
+        body.modal-open .modal-overlay { display: flex; opacity: 1; visibility: visible; }
+        body.modal-open .modal-container { transform: scale(1) translateY(0); opacity: 1; visibility: visible; }
         .mood-emoji.selected { background-color: rgba(44, 200, 232, 0.5); transform: scale(1.1); }
 </style>
 </head>
@@ -75,7 +78,7 @@
 <span class="material-symbols-outlined text-8xl text-primary/20 absolute -top-4 -right-4 transform rotate-12">lightbulb</span>
 <div class="relative z-10">
 <h3 class="font-semibold text-lg mb-2">Did you know?</h3>
-<p class="text-text-light/80 dark:text-text-dark/80">A new fact will appear here every time you load the page!</p>
+<p class="text-text-light/80 dark:text-text-dark/80">Laughter is a potent stress reliever.</p>
 </div>
 </div>
 </div>
@@ -139,8 +142,8 @@
 <p class="font-medium">Mindfulness</p>
 <p class="text-sm font-semibold text-primary">75%</p>
 </div>
-<div class="w-full bg-primary/20 rounded-full h-3.5">
-<div class="bg-primary h-3.5 rounded-full" style="width: 75%"></div>
+<div class="w-full bg-primary/20 rounded-full h-3.5 overflow-hidden">
+<div class="bg-primary h-3.5 rounded-full progress-bar-inner" style="width: 75%"></div>
 </div>
 </div>
 <div>
@@ -148,8 +151,8 @@
 <p class="font-medium">Physical Activity</p>
 <p class="text-sm font-semibold text-primary">50%</p>
 </div>
-<div class="w-full bg-primary/20 rounded-full h-3.5">
-<div class="bg-primary h-3.5 rounded-full" style="width: 50%"></div>
+<div class="w-full bg-primary/20 rounded-full h-3.5 overflow-hidden">
+<div class="bg-primary h-3.5 rounded-full progress-bar-inner" style="width: 50%"></div>
 </div>
 </div>
 <div>
@@ -157,8 +160,8 @@
 <p class="font-medium">Nutrition</p>
 <p class="text-sm font-semibold text-primary">25%</p>
 </div>
-<div class="w-full bg-primary/20 rounded-full h-3.5">
-<div class="bg-primary h-3.5 rounded-full" style="width: 25%"></div>
+<div class="w-full bg-primary/20 rounded-full h-3.5 overflow-hidden">
+<div class="bg-primary h-3.5 rounded-full progress-bar-inner" style="width: 25%"></div>
 </div>
 </div>
 </div>
@@ -213,7 +216,7 @@
 </div>
 </div>
 </div>
-<div class="fixed inset-0 z-[60] flex items-center justify-center modal-overlay bg-black/50 backdrop-blur-sm hidden" id="journal-modal">
+<div class="fixed inset-0 z-[60] flex items-center justify-center modal-overlay bg-black/50 backdrop-blur-sm" id="journal-modal">
 <div class="modal-container w-full max-w-2xl bg-foreground-light/80 dark:bg-foreground-dark/80 backdrop-blur-xl border rounded-xl p-8 flex flex-col">
 <div class="flex justify-between items-center mb-6">
 <h2 class="text-2xl font-bold">New Journal Entry</h2>
@@ -223,7 +226,7 @@
 <button class="bg-primary text-white font-bold py-3 px-6 rounded-lg self-end" id="save-journal-entry">Save Entry</button>
 </div>
 </div>
-<div class="fixed inset-0 z-[60] flex items-center justify-center modal-overlay bg-black/50 backdrop-blur-sm hidden" id="event-modal">
+<div class="fixed inset-0 z-[60] flex items-center justify-center modal-overlay bg-black/50 backdrop-blur-sm" id="event-modal">
 <div class="modal-container w-full max-w-md bg-foreground-light/80 dark:bg-foreground-dark/80 backdrop-blur-xl border rounded-xl p-8 flex flex-col">
 <div class="flex justify-between items-center mb-6">
 <h2 class="text-2xl font-bold">New Event</h2>
@@ -256,7 +259,7 @@
             "Gratitude journaling can significantly increase your feelings of happiness and well-being."
         ];
         const funFactContainer = document.getElementById('fun-fact-container');
-        if(funFactContainer) {
+        if (funFactContainer) {
             const randomFact = funFacts[Math.floor(Math.random() * funFacts.length)];
             funFactContainer.querySelector('p').textContent = randomFact;
         }
@@ -272,9 +275,9 @@
         function openChat() { body.classList.add('ai-chat-active'); }
         function closeChat() { body.classList.remove('ai-chat-active'); }
 
-        if(letsTalkButton) letsTalkButton.addEventListener('click', openChat);
-        if(chatNavButton) chatNavButton.addEventListener('click', (e) => { e.preventDefault(); openChat(); });
-        if(closeChatButton) closeChatButton.addEventListener('click', closeChat);
+        if (letsTalkButton) letsTalkButton.addEventListener('click', openChat);
+        if (chatNavButton) chatNavButton.addEventListener('click', (e) => { e.preventDefault(); openChat(); });
+        if (closeChatButton) closeChatButton.addEventListener('click', closeChat);
 
         function addMessage(text, sender) {
             const messageElement = document.createElement('div');
@@ -291,7 +294,7 @@
             }
         }
 
-        if(chatForm) {
+        if (chatForm) {
             chatForm.addEventListener('submit', async (event) => {
                 event.preventDefault();
                 const message = chatInput.value.trim();
@@ -334,7 +337,7 @@
             const seconds = (meditationSeconds % 60).toString().padStart(2, '0');
             meditationTimerDisplay.textContent = `${minutes}:${seconds}`;
         }
-        if(startMeditationBtn) {
+        if (startMeditationBtn) {
             startMeditationBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 isMeditating = !isMeditating;
@@ -356,7 +359,7 @@
                 }
             });
         }
-        if(resetMeditationBtn) {
+        if (resetMeditationBtn) {
             resetMeditationBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 clearInterval(meditationInterval);
@@ -374,12 +377,12 @@
         const closeJournalModalBtn = document.getElementById('close-journal-modal');
         const saveJournalEntryBtn = document.getElementById('save-journal-entry');
         
-        if(newJournalEntryBtn) newJournalEntryBtn.addEventListener('click', () => openModal(journalModal));
-        if(closeJournalModalBtn) closeJournalModalBtn.addEventListener('click', () => closeModal(journalModal));
-        if(saveJournalEntryBtn) saveJournalEntryBtn.addEventListener('click', () => {
+        if (newJournalEntryBtn) newJournalEntryBtn.addEventListener('click', () => openModal(journalModal));
+        if (closeJournalModalBtn) closeJournalModalBtn.addEventListener('click', () => closeModal(journalModal));
+        if (saveJournalEntryBtn) saveJournalEntryBtn.addEventListener('click', () => {
             const entry = journalTextarea.value;
             if (entry.trim()) {
-                let entries = JSON.parse(localStorage.getItem('thecarebud_journal')) || [];
+                let entries = JSON.parse(localStorage.getItem('thecarebud_journal') || '[]');
                 entries.push({ date: new Date().toISOString(), text: entry });
                 localStorage.setItem('thecarebud_journal', JSON.stringify(entries));
                 alert('Journal entry saved!');
@@ -392,15 +395,15 @@
         const hydrationCount = document.getElementById('hydration-count');
         const hydrationIncrement = document.getElementById('hydration-increment');
         const hydrationDecrement = document.getElementById('hydration-decrement');
-        if(hydrationCount) {
+        if (hydrationCount) {
             let glasses = parseInt(localStorage.getItem('thecarebud_hydration') || '0');
             hydrationCount.textContent = glasses;
-            hydrationIncrement.addEventListener('click', () => {
+            if (hydrationIncrement) hydrationIncrement.addEventListener('click', () => {
                 glasses++;
                 hydrationCount.textContent = glasses;
                 localStorage.setItem('thecarebud_hydration', glasses);
             });
-            hydrationDecrement.addEventListener('click', () => {
+            if (hydrationDecrement) hydrationDecrement.addEventListener('click', () => {
                 if (glasses > 0) {
                     glasses--;
                     hydrationCount.textContent = glasses;
@@ -445,7 +448,7 @@
             if(!calendarGrid) return;
             calendarGrid.innerHTML = '';
             const month = date.getMonth(), year = date.getFullYear();
-            monthYearDisplay.textContent = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+            if(monthYearDisplay) monthYearDisplay.textContent = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
             const firstDayOfMonth = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach(day => {
