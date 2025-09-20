@@ -24,18 +24,9 @@
                         "border-light": "rgba(255, 255, 255, 0.4)",
                         "border-dark": "rgba(51, 65, 85, 0.4)"
                     },
-                    fontFamily: {
-                        "display": ["Inter"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "1rem",
-                        "lg": "1.5rem",
-                        "xl": "2rem",
-                        "full": "9999px"
-                    },
-                    backdropBlur: {
-                        'xl': '30px'
-                    }
+                    fontFamily: { "display": ["Inter"] },
+                    borderRadius: { "DEFAULT": "1rem", "lg": "1.5rem", "xl": "2rem", "full": "9999px" },
+                    backdropBlur: { 'xl': '30px' }
                 },
             },
         }
@@ -45,8 +36,8 @@
         .dark body { background: linear-gradient(120deg, #1a2a45 0%, #0f172a 100%); }
         @keyframes fade-in-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in-up { animation: fade-in-up 0.5s ease-out forwards; opacity: 0; }
-        #main-content, #ai-chat-container { transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
-        #ai-chat-container { height: 0; opacity: 0; transform: translateY(50px) scale(0.9); pointer-events: none; }
+        #main-content { transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+        #ai-chat-container { transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); height: 0; opacity: 0; transform: translateY(50px) scale(0.9); pointer-events: none; }
         body.ai-chat-active #main-content { opacity: 0; transform: translateY(-50px) scale(0.9); pointer-events: none; height: 0; overflow: hidden; padding-top: 0; padding-bottom: 0; }
         body.ai-chat-active #ai-chat-container { height: auto; opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
         .quick-action-card .action-content { display: none; opacity: 0; transition: all 0.3s ease-out; }
@@ -54,7 +45,8 @@
         .quick-action-card:hover .default-content { display: none; opacity: 0; }
         .modal-overlay { opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .modal-container { transform: scale(0.95) translateY(20px); opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        body.modal-open .modal-overlay, body.modal-open .modal-container { opacity: 1; visibility: visible; transform: scale(1) translateY(0); }
+        body.modal-open .modal-overlay { opacity: 1; visibility: visible; }
+        body.modal-open .modal-container { transform: scale(1) translateY(0); opacity: 1; visibility: visible; }
         .mood-emoji.selected { background-color: rgba(44, 200, 232, 0.5); transform: scale(1.1); }
 </style>
 </head>
@@ -80,9 +72,9 @@
 </div>
 <div class="p-8 rounded-xl backdrop-blur-xl bg-foreground-light dark:bg-foreground-dark border border-border-light dark:border-border-dark animate-fade-in-up" style="animation-delay: 0.2s;">
 <h2 class="text-2xl font-bold mb-6">Fun Fact of the Day</h2>
-<div class="relative p-6 rounded-lg bg-primary/10 dark:bg-primary/20 overflow-hidden">
+<div id="fun-fact-container" class="relative p-6 rounded-lg bg-primary/10 dark:bg-primary/20 overflow-hidden">
 <span class="material-symbols-outlined text-8xl text-primary/20 absolute -top-4 -right-4 transform rotate-12">lightbulb</span>
-<div class="relative z-10" id="fun-fact-container">
+<div class="relative z-10">
 <h3 class="font-semibold text-lg mb-2">Did you know?</h3>
 <p class="text-text-light/80 dark:text-text-dark/80">A new fact will appear here every time you load the page!</p>
 </div>
@@ -91,323 +83,403 @@
 <div class="p-8 rounded-xl backdrop-blur-xl bg-foreground-light dark:bg-foreground-dark border border-border-light dark:border-border-dark animate-fade-in-up" style="animation-delay: 0.4s;">
 <h2 class="text-2xl font-bold mb-6">Quick Actions</h2>
 <div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
-    <div class="quick-action-card relative flex flex-col items-center justify-center p-4 rounded-lg bg-primary/20 dark:bg-primary/30 transition-all duration-300 hover:scale-105 cursor-pointer h-32">
-        <div class="default-content text-center flex flex-col items-center justify-center">
-            <span class="material-symbols-outlined text-4xl mb-2">self_improvement</span>
-            <span class="font-semibold text-sm">Meditation</span>
-        </div>
-        <div class="action-content w-full h-full flex-col items-center justify-center">
-            <p class="text-3xl font-bold mb-2" id="meditation-timer">05:00</p>
-            <div class="flex items-center gap-2">
-                <button class="p-2 rounded-full bg-white/30 hover:bg-white/50" id="start-meditation"><span class="material-symbols-outlined">play_arrow</span></button>
-                <button class="p-2 rounded-full bg-white/30 hover:bg-white/50" id="reset-meditation"><span class="material-symbols-outlined">replay</span></button>
-            </div>
-        </div>
-    </div>
-    <div class="quick-action-card relative flex flex-col items-center justify-center p-4 rounded-lg bg-primary/20 dark:bg-primary/30 transition-all duration-300 hover:scale-105 cursor-pointer h-32">
-        <div class="default-content text-center flex flex-col items-center justify-center">
-            <span class="material-symbols-outlined text-4xl mb-2">edit_note</span>
-            <span class="font-semibold text-sm">Journaling</span>
-        </div>
-        <div class="action-content w-full h-full flex-col items-center justify-center px-2">
-            <button class="bg-primary/80 text-white text-sm font-bold py-2 px-4 rounded-lg" id="new-journal-entry">New Entry</button>
-        </div>
-    </div>
-    <div class="quick-action-card relative flex flex-col items-center justify-center p-4 rounded-lg bg-primary/20 dark:bg-primary/30 transition-all duration-300 hover:scale-105 cursor-pointer h-32">
-        <div class="default-content text-center flex flex-col items-center justify-center">
-            <span class="material-symbols-outlined text-4xl mb-2">water_drop</span>
-            <span class="font-semibold text-sm">Hydration</span>
-        </div>
-        <div class="action-content w-full h-full flex-col items-center justify-center">
-            <p class="text-sm font-medium mb-1">Today: <span id="hydration-count">0</span> glasses</p>
-            <div class="flex items-center gap-2">
-                <button class="p-1 rounded-full bg-white/30 hover:bg-white/50" id="hydration-decrement"><span class="material-symbols-outlined">remove</span></button>
-                <button class="p-1 rounded-full bg-white/30 hover:bg-white/50" id="hydration-increment"><span class="material-symbols-outlined">add</span></button>
-            </div>
-        </div>
-    </div>
-    <div class="quick-action-card relative flex flex-col items-center justify-center p-4 rounded-lg bg-primary/20 dark:bg-primary/30 transition-all duration-300 hover:scale-105 cursor-pointer h-32">
-        <div class="default-content text-center flex flex-col items-center justify-center">
-            <span class="material-symbols-outlined text-4xl mb-2">mood</span>
-            <span class="font-semibold text-sm">Mood Tracker</span>
-        </div>
-        <div class="action-content w-full h-full flex-col items-center justify-center">
-            <p class="text-sm font-medium mb-2">How are you?</p>
-            <div class="flex items-center gap-2">
-                <button class="mood-emoji p-2 rounded-full hover:bg-white/50 text-2xl" data-mood="Happy">😊</button>
-                <button class="mood-emoji p-2 rounded-full hover:bg-white/50 text-2xl" data-mood="Neutral">😐</button>
-                <button class="mood-emoji p-2 rounded-full hover:bg-white/50 text-2xl" data-mood="Sad">😢</button>
-            </div>
-        </div>
-    </div>
+<div class="quick-action-card relative flex flex-col items-center justify-center p-4 rounded-lg bg-primary/20 dark:bg-primary/30 transition-all duration-300 hover:scale-105 cursor-pointer h-32">
+<div class="default-content text-center flex flex-col items-center justify-center">
+<span class="material-symbols-outlined text-4xl mb-2">self_improvement</span><span class="font-semibold text-sm">Meditation</span>
+</div>
+<div class="action-content w-full h-full flex-col items-center justify-center">
+<p class="text-3xl font-bold mb-2" id="meditation-timer">05:00</p>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full bg-white/30 hover:bg-white/50" id="start-meditation"><span class="material-symbols-outlined">play_arrow</span></button>
+<button class="p-2 rounded-full bg-white/30 hover:bg-white/50" id="reset-meditation"><span class="material-symbols-outlined">replay</span></button>
+</div>
+</div>
+</div>
+<div class="quick-action-card relative flex flex-col items-center justify-center p-4 rounded-lg bg-primary/20 dark:bg-primary/30 transition-all duration-300 hover:scale-105 cursor-pointer h-32">
+<div class="default-content text-center flex flex-col items-center justify-center">
+<span class="material-symbols-outlined text-4xl mb-2">edit_note</span><span class="font-semibold text-sm">Journaling</span>
+</div>
+<div class="action-content w-full h-full flex-col items-center justify-center px-2">
+<button class="bg-primary/80 text-white text-sm font-bold py-2 px-4 rounded-lg" id="new-journal-entry">New Entry</button>
+</div>
+</div>
+<div class="quick-action-card relative flex flex-col items-center justify-center p-4 rounded-lg bg-primary/20 dark:bg-primary/30 transition-all duration-300 hover:scale-105 cursor-pointer h-32">
+<div class="default-content text-center flex flex-col items-center justify-center">
+<span class="material-symbols-outlined text-4xl mb-2">water_drop</span><span class="font-semibold text-sm">Hydration</span>
+</div>
+<div class="action-content w-full h-full flex-col items-center justify-center">
+<p class="text-sm font-medium mb-1">Today: <span id="hydration-count">0</span> glasses</p>
+<div class="flex items-center gap-2">
+<button class="p-1 rounded-full bg-white/30 hover:bg-white/50" id="hydration-decrement"><span class="material-symbols-outlined">remove</span></button>
+<button class="p-1 rounded-full bg-white/30 hover:bg-white/50" id="hydration-increment"><span class="material-symbols-outlined">add</span></button>
+</div>
+</div>
+</div>
+<div class="quick-action-card relative flex flex-col items-center justify-center p-4 rounded-lg bg-primary/20 dark:bg-primary/30 transition-all duration-300 hover:scale-105 cursor-pointer h-32">
+<div class="default-content text-center flex flex-col items-center justify-center">
+<span class="material-symbols-outlined text-4xl mb-2">mood</span><span class="font-semibold text-sm">Mood Tracker</span>
+</div>
+<div class="action-content w-full h-full flex-col items-center justify-center">
+<p class="text-sm font-medium mb-2">How are you?</p>
+<div class="flex items-center gap-2">
+<button class="mood-emoji p-2 rounded-full hover:bg-white/50 text-2xl" data-mood="Happy">😊</button>
+<button class="mood-emoji p-2 rounded-full hover:bg-white/50 text-2xl" data-mood="Neutral">😐</button>
+<button class="mood-emoji p-2 rounded-full hover:bg-white/50 text-2xl" data-mood="Sad">😢</button>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div class="col-span-3 lg:col-span-1 space-y-8">
 <div class="p-8 rounded-xl backdrop-blur-xl bg-foreground-light dark:bg-foreground-dark border border-border-light dark:border-border-dark animate-fade-in-up" style="animation-delay: 0.6s;">
-    <h2 class="text-2xl font-bold mb-6">Your Progress</h2>
-    </div>
+<h2 class="text-2xl font-bold mb-6">Your Progress</h2>
+</div>
 <div class="p-8 rounded-xl backdrop-blur-xl bg-foreground-light dark:bg-foreground-dark border border-border-light dark:border-border-dark animate-fade-in-up" style="animation-delay: 0.8s;">
-    <div class="flex items-center justify-between mb-4">
-        <h2 class="text-2xl font-bold" id="calendar-month-year">September 2025</h2>
-        <div class="flex items-center gap-2">
-            <button class="p-1 rounded-full hover:bg-primary/20" id="calendar-prev"><span class="material-symbols-outlined">chevron_left</span></button>
-            <button class="p-1 rounded-full hover:bg-primary/20" id="calendar-next"><span class="material-symbols-outlined">chevron_right</span></button>
-        </div>
-    </div>
-    <div class="grid grid-cols-7 gap-2 text-center text-sm" id="calendar-grid"></div>
-    <div class="border-t border-border-light dark:border-border-dark pt-4 mt-4">
-        <button class="flex items-center justify-center gap-1 w-full bg-primary/80 text-white text-sm font-bold py-2 px-3 rounded-lg" id="new-event-btn"><span class="material-symbols-outlined !text-base">add</span><span>New Event</span></button>
-        <div class="mt-4 space-y-2" id="event-list"></div>
-    </div>
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-2xl font-bold" id="calendar-month-year"></h2>
+<div class="flex items-center gap-2">
+<button class="p-1 rounded-full hover:bg-primary/20" id="calendar-prev"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="p-1 rounded-full hover:bg-primary/20" id="calendar-next"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+<div class="grid grid-cols-7 gap-2 text-center text-sm" id="calendar-grid"></div>
+<div class="border-t border-border-light dark:border-border-dark pt-4 mt-4">
+<button class="flex items-center justify-center gap-1 w-full bg-primary/80 text-white text-sm font-bold py-2 px-3 rounded-lg" id="new-event-btn"><span class="material-symbols-outlined !text-base">add</span><span>New Event</span></button>
+<div class="mt-4 space-y-2" id="event-list"></div>
+</div>
 </div>
 </div>
 </main>
 </div>
 </div>
 <div class="absolute top-0 left-0 w-full pt-28 pb-12 px-6" id="ai-chat-container">
-    </div>
+<div class="max-w-4xl mx-auto p-0 rounded-xl backdrop-blur-xl bg-foreground-light/80 dark:bg-foreground-dark/80 border border-border-light dark:border-border-dark shadow-2xl flex flex-col" style="height: calc(100vh - 12rem);">
+<div class="p-4 border-b border-border-light dark:border-border-dark flex items-center justify-between flex-shrink-0">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-primary/20 dark:bg-primary/30 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-xl text-primary">psychology</span>
+</div>
+<div>
+<h3 class="font-bold text-lg">AI Wellness Expert</h3>
+<p class="text-sm text-text-light/60 dark:text-text-dark/60">Online</p>
+</div>
+</div>
+<button class="p-2 rounded-full hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors" id="close-chat"><span class="material-symbols-outlined">close</span></button>
+</div>
+<div class="flex-1 p-6 space-y-6 overflow-y-auto" id="chat-messages">
+<div class="flex gap-3 items-start">
+<div class="size-8 rounded-full bg-primary/20 dark:bg-primary/30 flex items-center justify-center flex-shrink-0 mt-1">
+<span class="material-symbols-outlined text-lg text-primary">psychology</span>
+</div>
+<div class="p-3 rounded-lg rounded-tl-none bg-primary/10 dark:bg-primary/20 max-w-lg">
+<p class="text-sm">Hello! I'm your AI wellness expert. How can I help you today?</p>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-border-light dark:border-border-dark flex-shrink-0">
+<form id="chat-form" class="relative">
+<input id="chat-input" class="w-full bg-white/40 dark:bg-black/20 border-none rounded-lg py-3 pl-4 pr-14 focus:ring-2 focus:ring-primary text-sm" placeholder="Type your message..." type="text"/>
+<button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-primary text-white transform hover:scale-105"><span class="material-symbols-outlined !text-xl">send</span></button>
+</form>
+</div>
+</div>
+</div>
 <div class="fixed inset-0 z-[60] flex items-center justify-center modal-overlay bg-black/50 backdrop-blur-sm hidden" id="journal-modal">
-    <div class="modal-container w-full max-w-2xl bg-foreground-light/80 dark:bg-foreground-dark/80 backdrop-blur-xl border rounded-xl p-8 flex flex-col">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold">New Journal Entry</h2>
-            <button class="p-2 rounded-full hover:bg-primary/20" id="close-journal-modal"><span class="material-symbols-outlined">close</span></button>
-        </div>
-        <textarea class="w-full flex-1 bg-white/40 dark:bg-black/20 border-none rounded-lg p-4 resize-none mb-6" id="journal-textarea" placeholder="Write about your day..." rows="10"></textarea>
-        <button class="bg-primary text-white font-bold py-3 px-6 rounded-lg self-end" id="save-journal-entry">Save Entry</button>
-    </div>
+<div class="modal-container w-full max-w-2xl bg-foreground-light/80 dark:bg-foreground-dark/80 backdrop-blur-xl border rounded-xl p-8 flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-2xl font-bold">New Journal Entry</h2>
+<button class="p-2 rounded-full hover:bg-primary/20" id="close-journal-modal"><span class="material-symbols-outlined">close</span></button>
+</div>
+<textarea class="w-full flex-1 bg-white/40 dark:bg-black/20 border-none rounded-lg p-4 resize-none mb-6" id="journal-textarea" placeholder="Write about your day..." rows="10"></textarea>
+<button class="bg-primary text-white font-bold py-3 px-6 rounded-lg self-end" id="save-journal-entry">Save Entry</button>
+</div>
 </div>
 <div class="fixed inset-0 z-[60] flex items-center justify-center modal-overlay bg-black/50 backdrop-blur-sm hidden" id="event-modal">
-    <div class="modal-container w-full max-w-md bg-foreground-light/80 dark:bg-foreground-dark/80 backdrop-blur-xl border rounded-xl p-8 flex flex-col">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold">New Event</h2>
-            <button class="p-2 rounded-full hover:bg-primary/20" id="close-event-modal"><span class="material-symbols-outlined">close</span></button>
-        </div>
-        <input id="event-date" type="hidden"/><input id="event-id" type="hidden"/>
-        <div class="space-y-4">
-            <input class="w-full bg-white/40 dark:bg-black/20 border-none rounded-lg py-3 px-4" id="event-title" placeholder="Event Title" type="text"/>
-            <input class="w-full bg-white/40 dark:bg-black/20 border-none rounded-lg py-3 px-4" id="event-time" placeholder="Event Time (e.g., 7PM)" type="text"/>
-        </div>
-        <div class="flex justify-end items-center gap-4 mt-6">
-            <button class="text-red-500 font-bold py-2 px-4 rounded-lg hover:bg-red-500/20 hidden" id="delete-event">Delete</button>
-            <button class="bg-primary text-white font-bold py-3 px-6 rounded-lg" id="save-event">Save Event</button>
-        </div>
-    </div>
+<div class="modal-container w-full max-w-md bg-foreground-light/80 dark:bg-foreground-dark/80 backdrop-blur-xl border rounded-xl p-8 flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-2xl font-bold">New Event</h2>
+<button class="p-2 rounded-full hover:bg-primary/20" id="close-event-modal"><span class="material-symbols-outlined">close</span></button>
+</div>
+<input id="event-date" type="hidden"/><input id="event-id" type="hidden"/>
+<div class="space-y-4">
+<input class="w-full bg-white/40 dark:bg-black/20 border-none rounded-lg py-3 px-4" id="event-title" placeholder="Event Title" type="text"/>
+<input class="w-full bg-white/40 dark:bg-black/20 border-none rounded-lg py-3 px-4" id="event-time" placeholder="Event Time (e.g., 7PM)" type="text"/>
+</div>
+<div class="flex justify-end items-center gap-4 mt-6">
+<button class="text-red-500 font-bold py-2 px-4 rounded-lg hover:bg-red-500/20 hidden" id="delete-event">Delete</button>
+<button class="bg-primary text-white font-bold py-3 px-6 rounded-lg" id="save-event">Save Event</button>
+</div>
+</div>
 </div>
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const body = document.body;
-    
-    // --- FUN FACTS LOGIC ---
-    const funFacts = [
-        "Smiling, even a fake one, can improve your mood.",
-        "Spending time in nature can reduce stress, anxiety, and depression.",
-        "Getting just 20 minutes of exercise can improve your mood for up to 12 hours.",
-        "Dark chocolate is rich in antioxidants and can help reduce stress hormones.",
-        "Listening to calming music has been shown to lower blood pressure and anxiety.",
-        "Deep breathing exercises can instantly help calm your nervous system.",
-        "Gratitude journaling can significantly increase your feelings of happiness and well-being."
-    ];
-    const funFactContainer = document.getElementById('fun-fact-container');
-    const randomFact = funFacts[Math.floor(Math.random() * funFacts.length)];
-    funFactContainer.querySelector('p').textContent = randomFact;
+    document.addEventListener('DOMContentLoaded', function() {
+        const body = document.body;
 
-    // --- AI CHAT LOGIC ---
-    // (Your existing, working AI chat logic goes here, no changes needed)
-    
-    // --- WIDGETS AND MODALS LOGIC ---
-    function openModal(modal) { body.classList.add('modal-open'); modal.classList.remove('hidden'); }
-    function closeModal(modal) { body.classList.remove('modal-open'); modal.classList.add('hidden'); }
-    
-    // Meditation
-    const meditationTimerDisplay = document.getElementById('meditation-timer');
-    const startMeditationBtn = document.getElementById('start-meditation');
-    const resetMeditationBtn = document.getElementById('reset-meditation');
-    let meditationInterval, meditationSeconds = 300, isMeditating = false;
-    
-    function updateMeditationTimer() {
-        const minutes = Math.floor(meditationSeconds / 60).toString().padStart(2, '0');
-        const seconds = (meditationSeconds % 60).toString().padStart(2, '0');
-        meditationTimerDisplay.textContent = `${minutes}:${seconds}`;
-    }
-    startMeditationBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        isMeditating = !isMeditating;
-        startMeditationBtn.innerHTML = `<span class="material-symbols-outlined">${isMeditating ? 'pause' : 'play_arrow'}</span>`;
-        if (isMeditating) {
-            meditationInterval = setInterval(() => {
-                meditationSeconds--;
-                updateMeditationTimer();
-                if (meditationSeconds <= 0) {
-                    clearInterval(meditationInterval);
-                    isMeditating = false;
-                    startMeditationBtn.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
-                }
-            }, 1000);
-        } else {
+        // --- FUN FACTS LOGIC ---
+        const funFacts = [
+            "Smiling, even a fake one, can improve your mood.",
+            "Spending time in nature can reduce stress, anxiety, and depression.",
+            "Getting just 20 minutes of exercise can improve your mood for up to 12 hours.",
+            "Dark chocolate is rich in antioxidants and can help reduce stress hormones.",
+            "Listening to calming music has been shown to lower blood pressure and anxiety.",
+            "Deep breathing exercises can instantly help calm your nervous system.",
+            "Gratitude journaling can significantly increase your feelings of happiness and well-being."
+        ];
+        const funFactContainer = document.getElementById('fun-fact-container');
+        const randomFact = funFacts[Math.floor(Math.random() * funFacts.length)];
+        funFactContainer.querySelector('p').textContent = randomFact;
+
+        // --- AI CHAT LOGIC ---
+        const letsTalkButton = document.getElementById('letstalk-button');
+        const closeChatButton = document.getElementById('close-chat');
+        const chatNavButton = document.getElementById('chat-nav-button');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+
+        function openChat() { body.classList.add('ai-chat-active'); }
+        function closeChat() { body.classList.remove('ai-chat-active'); }
+
+        letsTalkButton.addEventListener('click', openChat);
+        chatNavButton.addEventListener('click', (e) => { e.preventDefault(); openChat(); });
+        closeChatButton.addEventListener('click', closeChat);
+
+        function addMessage(text, sender) {
+            const messageElement = document.createElement('div');
+            if (sender === 'user') {
+                messageElement.className = 'flex gap-3 items-start justify-end animate-fade-in-up';
+                messageElement.innerHTML = `<div class="p-3 rounded-lg rounded-tr-none bg-primary text-white max-w-lg"><p class="text-sm">${text}</p></div>`;
+            } else {
+                messageElement.className = 'flex gap-3 items-start animate-fade-in-up';
+                messageElement.innerHTML = `<div class="size-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1"><span class="material-symbols-outlined text-lg text-primary">psychology</span></div><div class="p-3 rounded-lg rounded-tl-none bg-primary/10 max-w-lg"><p class="text-sm">${text}</p></div>`;
+            }
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        chatForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const message = chatInput.value.trim();
+            if (!message) return;
+            addMessage(message, 'user');
+            chatInput.value = '';
+            chatInput.disabled = true;
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message }),
+                });
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                addMessage(data.reply, 'assistant');
+            } catch (error) {
+                console.error('Error:', error);
+                addMessage('Sorry, I seem to be having trouble connecting. Please try again later.', 'assistant');
+            } finally {
+                chatInput.disabled = false;
+                chatInput.focus();
+            }
+        });
+
+        // --- WIDGETS AND MODALS LOGIC ---
+        function openModal(modal) { body.classList.add('modal-open'); modal.classList.remove('hidden'); }
+        function closeModal(modal) { body.classList.remove('modal-open'); modal.classList.add('hidden'); }
+        
+        // Meditation
+        const meditationTimerDisplay = document.getElementById('meditation-timer');
+        const startMeditationBtn = document.getElementById('start-meditation');
+        const resetMeditationBtn = document.getElementById('reset-meditation');
+        let meditationInterval, meditationSeconds = 300, isMeditating = false;
+        
+        function updateMeditationTimer() {
+            const minutes = Math.floor(meditationSeconds / 60).toString().padStart(2, '0');
+            const seconds = (meditationSeconds % 60).toString().padStart(2, '0');
+            meditationTimerDisplay.textContent = `${minutes}:${seconds}`;
+        }
+        startMeditationBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            isMeditating = !isMeditating;
+            startMeditationBtn.innerHTML = `<span class="material-symbols-outlined">${isMeditating ? 'pause' : 'play_arrow'}</span>`;
+            if (isMeditating) {
+                meditationInterval = setInterval(() => {
+                    meditationSeconds--;
+                    updateMeditationTimer();
+                    if (meditationSeconds <= 0) {
+                        clearInterval(meditationInterval);
+                        isMeditating = false;
+                        meditationSeconds = 300;
+                        updateMeditationTimer();
+                        startMeditationBtn.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
+                    }
+                }, 1000);
+            } else {
+                clearInterval(meditationInterval);
+            }
+        });
+        resetMeditationBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             clearInterval(meditationInterval);
-        }
-    });
-    resetMeditationBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        clearInterval(meditationInterval);
-        isMeditating = false;
-        meditationSeconds = 300;
-        updateMeditationTimer();
-        startMeditationBtn.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
-    });
+            isMeditating = false;
+            meditationSeconds = 300;
+            updateMeditationTimer();
+            startMeditationBtn.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
+        });
 
-    // Journaling
-    const journalModal = document.getElementById('journal-modal');
-    document.getElementById('new-journal-entry').addEventListener('click', () => openModal(journalModal));
-    document.getElementById('close-journal-modal').addEventListener('click', () => closeModal(journalModal));
-    document.getElementById('save-journal-entry').addEventListener('click', () => {
-        const entry = document.getElementById('journal-textarea').value;
-        if (entry.trim()) {
-            console.log('Journal entry saved:', entry); // In a real app, save this to localStorage
-        }
-        document.getElementById('journal-textarea').value = '';
-        closeModal(journalModal);
-    });
+        // Journaling
+        const journalModal = document.getElementById('journal-modal');
+        const journalTextarea = document.getElementById('journal-textarea');
+        document.getElementById('new-journal-entry').addEventListener('click', () => openModal(journalModal));
+        document.getElementById('close-journal-modal').addEventListener('click', () => closeModal(journalModal));
+        document.getElementById('save-journal-entry').addEventListener('click', () => {
+            const entry = journalTextarea.value;
+            if (entry.trim()) {
+                // In a real app, you would save this to a list in localStorage
+                console.log('Journal entry saved:', entry);
+                alert('Journal entry saved!');
+            }
+            journalTextarea.value = '';
+            closeModal(journalModal);
+        });
 
-    // Hydration
-    const hydrationCount = document.getElementById('hydration-count');
-    let glasses = parseInt(localStorage.getItem('hydrationCount') || '0');
-    hydrationCount.textContent = glasses;
-    document.getElementById('hydration-increment').addEventListener('click', () => {
-        glasses++;
+        // Hydration
+        const hydrationCount = document.getElementById('hydration-count');
+        let glasses = parseInt(localStorage.getItem('thecarebud_hydration') || '0');
         hydrationCount.textContent = glasses;
-        localStorage.setItem('hydrationCount', glasses);
-    });
-    document.getElementById('hydration-decrement').addEventListener('click', () => {
-        if (glasses > 0) {
-            glasses--;
+        document.getElementById('hydration-increment').addEventListener('click', () => {
+            glasses++;
             hydrationCount.textContent = glasses;
-            localStorage.setItem('hydrationCount', glasses);
-        }
-    });
-
-    // Mood Tracker
-    document.querySelectorAll('.mood-emoji').forEach(emoji => {
-        emoji.addEventListener('click', () => {
-            const mood = emoji.dataset.mood;
-            console.log(`Mood logged: ${mood}`); // In a real app, save this to localStorage
-            document.querySelectorAll('.mood-emoji').forEach(e => e.classList.remove('selected'));
-            emoji.classList.add('selected');
+            localStorage.setItem('thecarebud_hydration', glasses);
         });
-    });
-
-    // Calendar
-    const calendarGrid = document.getElementById('calendar-grid');
-    const monthYearDisplay = document.getElementById('calendar-month-year');
-    const eventModal = document.getElementById('event-modal');
-    const eventList = document.getElementById('event-list');
-    const eventDateInput = document.getElementById('event-date');
-    const eventIdInput = document.getElementById('event-id');
-    const eventTitleInput = document.getElementById('event-title');
-    const eventTimeInput = document.getElementById('event-time');
-    let currentDate = new Date();
-    let events = JSON.parse(localStorage.getItem('thecarebud_events')) || {};
-
-    function saveEvents() { localStorage.setItem('thecarebud_events', JSON.stringify(events)); }
-    
-    function generateCalendar(date) {
-        calendarGrid.innerHTML = '';
-        const month = date.getMonth(), year = date.getFullYear();
-        monthYearDisplay.textContent = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-        const firstDayOfMonth = new Date(year, month, 1).getDay();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach(day => {
-            const header = document.createElement('div');
-            header.className = 'font-medium text-text-light/60';
-            header.textContent = day;
-            calendarGrid.appendChild(header);
+        document.getElementById('hydration-decrement').addEventListener('click', () => {
+            if (glasses > 0) {
+                glasses--;
+                hydrationCount.textContent = glasses;
+                localStorage.setItem('thecarebud_hydration', glasses);
+            }
         });
-        for (let i = 0; i < firstDayOfMonth; i++) calendarGrid.appendChild(document.createElement('div'));
-        for (let i = 1; i <= daysInMonth; i++) {
-            const dayCell = document.createElement('div');
-            const fullDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-            dayCell.textContent = i;
-            dayCell.className = 'cursor-pointer hover:bg-primary/20 rounded-full w-8 h-8 flex items-center justify-center mx-auto relative transition-colors';
-            dayCell.dataset.date = fullDate;
-            if (events[fullDate]?.length) {
-                dayCell.innerHTML += '<span class="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-primary"></span>';
-            }
-            if (i === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear()) {
-                dayCell.classList.add('bg-primary', 'text-white');
-            }
-            dayCell.addEventListener('click', () => showEventsForDate(fullDate));
-            calendarGrid.appendChild(dayCell);
-        }
-    }
 
-    function showEventsForDate(date) {
-        eventList.innerHTML = '';
-        document.querySelectorAll('#calendar-grid div[data-date]').forEach(d => d.classList.remove('bg-primary/40'));
-        document.querySelector(`[data-date='${date}']`)?.classList.add('bg-primary/40');
-        if (events[date]?.length) {
-            events[date].forEach(event => {
-                const eventEl = document.createElement('div');
-                eventEl.className = 'flex items-center gap-4 p-3 rounded-lg hover:bg-primary/10 cursor-pointer';
-                eventEl.innerHTML = `<div><h4 class="font-semibold">${event.title}</h4><p class="text-sm text-text-light/80">${event.time || ''}</p></div>`;
-                eventEl.addEventListener('click', () => openEventModal(date, event));
-                eventList.appendChild(eventEl);
+        // Mood Tracker
+        document.querySelectorAll('.mood-emoji').forEach(emoji => {
+            emoji.addEventListener('click', () => {
+                const mood = emoji.dataset.mood;
+                localStorage.setItem('thecarebud_mood_today', mood);
+                console.log(`Mood logged: ${mood}`);
+                document.querySelectorAll('.mood-emoji').forEach(e => e.classList.remove('selected'));
+                emoji.classList.add('selected');
             });
-        } else {
-            eventList.innerHTML = `<p class="text-sm text-center text-text-light/60">No events for this day.</p>`;
-        }
-    }
+        });
 
-    function openEventModal(date, event = null) {
-        openModal(eventModal);
-        eventDateInput.value = date;
-        if (event) {
-            eventTitleInput.value = event.title;
-            eventTimeInput.value = event.time;
-            eventIdInput.value = event.id;
-            document.getElementById('delete-event').classList.remove('hidden');
-        } else {
-            eventTitleInput.value = ''; eventTimeInput.value = ''; eventIdInput.value = '';
-            document.getElementById('delete-event').classList.add('hidden');
+        // Calendar
+        const calendarGrid = document.getElementById('calendar-grid');
+        const monthYearDisplay = document.getElementById('calendar-month-year');
+        const eventModal = document.getElementById('event-modal');
+        const eventList = document.getElementById('event-list');
+        const eventDateInput = document.getElementById('event-date');
+        const eventIdInput = document.getElementById('event-id');
+        const eventTitleInput = document.getElementById('event-title');
+        const eventTimeInput = document.getElementById('event-time');
+        const deleteEventBtn = document.getElementById('delete-event');
+        let currentDate = new Date();
+        let events = JSON.parse(localStorage.getItem('thecarebud_events')) || {};
+
+        function saveEvents() { localStorage.setItem('thecarebud_events', JSON.stringify(events)); }
+        
+        function generateCalendar(date) {
+            calendarGrid.innerHTML = '';
+            const month = date.getMonth(), year = date.getFullYear();
+            monthYearDisplay.textContent = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            const firstDayOfMonth = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'font-medium text-text-light/60 dark:text-text-dark/60';
+                header.textContent = day;
+                calendarGrid.appendChild(header);
+            });
+            for (let i = 0; i < firstDayOfMonth; i++) calendarGrid.appendChild(document.createElement('div'));
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayCell = document.createElement('div');
+                const fullDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                dayCell.textContent = i;
+                dayCell.className = 'cursor-pointer hover:bg-primary/20 rounded-full w-8 h-8 flex items-center justify-center mx-auto relative transition-colors';
+                dayCell.dataset.date = fullDate;
+                if (events[fullDate]?.length) {
+                    dayCell.innerHTML += '<span class="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-primary"></span>';
+                }
+                const today = new Date();
+                if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                    dayCell.classList.add('bg-primary', 'text-white');
+                }
+                dayCell.addEventListener('click', () => showEventsForDate(fullDate));
+                calendarGrid.appendChild(dayCell);
+            }
         }
-    }
+
+        function showEventsForDate(date) {
+            eventList.innerHTML = '';
+            document.querySelectorAll('#calendar-grid div[data-date]').forEach(d => d.classList.remove('bg-primary/40'));
+            document.querySelector(`[data-date='${date}']`)?.classList.add('bg-primary/40');
+            if (events[date]?.length) {
+                events[date].forEach(event => {
+                    const eventEl = document.createElement('div');
+                    eventEl.className = 'flex items-center gap-4 p-3 rounded-lg hover:bg-primary/10 cursor-pointer';
+                    eventEl.innerHTML = `<div><h4 class="font-semibold">${event.title}</h4><p class="text-sm text-text-light/80">${event.time || ''}</p></div>`;
+                    eventEl.addEventListener('click', () => openEventModal(date, event));
+                    eventList.appendChild(eventEl);
+                });
+            } else {
+                eventList.innerHTML = `<p class="text-sm text-center text-text-light/60 dark:text-text-dark/60">No events for this day.</p>`;
+            }
+        }
+
+        function openEventModal(date, event = null) {
+            openModal(eventModal);
+            eventDateInput.value = date;
+            if (event) {
+                eventTitleInput.value = event.title; eventTimeInput.value = event.time; eventIdInput.value = event.id;
+                deleteEventBtn.classList.remove('hidden');
+            } else {
+                eventTitleInput.value = ''; eventTimeInput.value = ''; eventIdInput.value = '';
+                deleteEventBtn.classList.add('hidden');
+            }
+        }
     
-    document.getElementById('calendar-prev').addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); generateCalendar(currentDate); });
-    document.getElementById('calendar-next').addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); generateCalendar(currentDate); });
-    document.getElementById('new-event-btn').addEventListener('click', () => openEventModal(new Date().toISOString().split('T')[0]));
-    document.getElementById('close-event-modal').addEventListener('click', () => closeModal(eventModal));
+        document.getElementById('calendar-prev').addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); generateCalendar(currentDate); });
+        document.getElementById('calendar-next').addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); generateCalendar(currentDate); });
+        document.getElementById('new-event-btn').addEventListener('click', () => openEventModal(new Date().toISOString().split('T')[0]));
+        document.getElementById('close-event-modal').addEventListener('click', () => closeModal(eventModal));
 
-    document.getElementById('save-event').addEventListener('click', () => {
-        const date = eventDateInput.value, id = eventIdInput.value;
-        const newEvent = { id: id ? parseInt(id) : Date.now(), title: eventTitleInput.value, time: eventTimeInput.value };
-        if (!events[date]) events[date] = [];
-        if (id) {
-            const index = events[date].findIndex(e => e.id === newEvent.id);
-            events[date][index] = newEvent;
-        } else {
-            events[date].push(newEvent);
-        }
-        saveEvents();
-        closeModal(eventModal);
+        document.getElementById('save-event').addEventListener('click', () => {
+            const date = eventDateInput.value, id = eventIdInput.value;
+            const newEvent = { id: id ? parseInt(id) : Date.now(), title: eventTitleInput.value, time: eventTimeInput.value };
+            if (!events[date]) events[date] = [];
+            if (id) {
+                const index = events[date].findIndex(e => e.id === newEvent.id);
+                events[date][index] = newEvent;
+            } else { events[date].push(newEvent); }
+            saveEvents();
+            closeModal(eventModal);
+            generateCalendar(currentDate);
+            showEventsForDate(date);
+        });
+
+        deleteEventBtn.addEventListener('click', () => {
+            const date = eventDateInput.value, id = parseInt(eventIdInput.value);
+            events[date] = events[date].filter(e => e.id !== id);
+            if (!events[date].length) delete events[date];
+            saveEvents();
+            closeModal(eventModal);
+            generateCalendar(currentDate);
+            showEventsForDate(date);
+        });
+
+        // Initial Load
         generateCalendar(currentDate);
-        showEventsForDate(date);
+        showEventsForDate(new Date().toISOString().split('T')[0]);
     });
-
-    document.getElementById('delete-event').addEventListener('click', () => {
-        const date = eventDateInput.value, id = parseInt(eventIdInput.value);
-        events[date] = events[date].filter(e => e.id !== id);
-        if (!events[date].length) delete events[date];
-        saveEvents();
-        closeModal(eventModal);
-        generateCalendar(currentDate);
-        showEventsForDate(date);
-    });
-
-    // Initial Load
-    generateCalendar(currentDate);
-    showEventsForDate(new Date().toISOString().split('T')[0]);
-});
 </script>
 </body>
 </html>
