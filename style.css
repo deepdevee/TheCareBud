@@ -1,1 +1,84 @@
-
+body {
+    background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+}
+.dark body {
+    background: linear-gradient(120deg, #1a2a45 0%, #0f172a 100%);
+}
+@keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+    animation: fade-in-up 0.5s ease-out forwards;
+    opacity: 0;
+}
+@keyframes progress-animation {
+    from { width: 0%; }
+}
+.progress-bar-inner {
+    animation: progress-animation 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+#main-content {
+    transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+#ai-chat-container {
+    transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 0;
+    opacity: 0;
+    transform: translateY(50px) scale(0.9);
+    pointer-events: none;
+}
+body.ai-chat-active #main-content {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+    pointer-events: none;
+    height: 0;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+body.ai-chat-active #ai-chat-container {
+    height: auto;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+.quick-action-card .action-content {
+    display: none;
+    opacity: 0;
+    transition: all 0.3s ease-out;
+}
+.quick-action-card:hover .action-content {
+    display: flex;
+    opacity: 1;
+}
+.quick-action-card:hover .default-content {
+    display: none;
+    opacity: 0;
+}
+.modal-overlay {
+    display: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.modal-container {
+    transform: scale(0.95) translateY(20px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+body.modal-open .modal-overlay {
+    display: flex;
+    opacity: 1;
+    visibility: visible;
+}
+body.modal-open .modal-container {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+    visibility: visible;
+}
+.mood-emoji.selected {
+    background-color: rgba(44, 200, 232, 0.5);
+    transform: scale(1.1);
+}
