@@ -57,7 +57,10 @@
 <div id="home-page">
 <header class="fixed top-0 left-0 right-0 z-50 p-6 backdrop-blur-xl bg-foreground-light dark:bg-foreground-dark border-b border-border-light dark:border-border-dark">
 <div class="max-w-7xl mx-auto flex items-center justify-between">
-<h1 class="text-2xl font-bold">TheCareBud</h1>
+<a href="#" class="flex items-center gap-3">
+<img src="https://github.com/deepdevee/wellness-app/blob/main/logo.png?raw=true" alt="TheCareBud Logo" class="h-8 w-auto rounded-full">
+<span class="text-2xl font-bold">TheCareBud</span>
+</a>
 <nav class="flex items-center gap-8">
 <a class="text-sm font-medium hover:text-primary transition-colors" href="#">Home</a>
 <a class="text-sm font-medium hover:text-primary transition-colors" href="#" id="chat-nav-button">Chat</a>
@@ -192,7 +195,7 @@
 <span class="material-symbols-outlined text-xl text-primary">psychology</span>
 </div>
 <div>
-<h3 class="font-bold text-lg">AI Wellness Expert</h3>
+<h3 class="font-bold text-lg">Your Wellness Companion</h3>
 <p class="text-sm text-text-light/60 dark:text-text-dark/60">Online</p>
 </div>
 </div>
@@ -239,7 +242,6 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const body = document.body;
-
         // --- FUN FACTS LOGIC ---
         const funFacts = [
             "Smiling, even a fake one, can improve your mood.", "Spending time in nature can reduce stress, anxiety, and depression.",
@@ -252,7 +254,6 @@
             const randomFact = funFacts[Math.floor(Math.random() * funFacts.length)];
             funFactContainer.querySelector('p').textContent = randomFact;
         }
-
         // --- AI CHAT LOGIC ---
         const letsTalkButton = document.getElementById('letstalk-button');
         const closeChatButton = document.getElementById('close-chat');
@@ -260,10 +261,8 @@
         const chatForm = document.getElementById('chat-form');
         const chatInput = document.getElementById('chat-input');
         const chatMessages = document.getElementById('chat-messages');
-
         function openChat() { body.classList.add('ai-chat-active'); }
         function closeChat() { body.classList.remove('ai-chat-active'); }
-
         function addMessage(text, sender) {
             const messageElement = document.createElement('div');
             if (sender === 'user') {
@@ -278,37 +277,26 @@
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
         }
-
         function startChatWithContext(context) {
             if (!chatMessages) return;
-            
             const savedMood = localStorage.getItem('thecarebud_mood_today');
             if (savedMood) {
                 context = savedMood;
                 localStorage.removeItem('thecarebud_mood_today');
             }
-            
             chatMessages.innerHTML = '';
             let firstMessage = "Hello! I'm your AI wellness expert. How can I help you today?";
             switch (context) {
-                case 'Happy':
-                    firstMessage = "That's wonderful to hear! What's putting a smile on your face today?";
-                    break;
-                case 'Neutral':
-                    firstMessage = "Thanks for checking in. Is there anything on your mind, or something you'd like to explore?";
-                    break;
-                case 'Sad':
-                    firstMessage = "I'm sorry you're feeling this way. I'm here to listen if you'd like to talk about what's on your mind.";
-                    break;
+                case 'Happy': firstMessage = "That's wonderful to hear! What's putting a smile on your face today?"; break;
+                case 'Neutral': firstMessage = "Thanks for checking in. Is there anything on your mind, or something you'd like to explore?"; break;
+                case 'Sad': firstMessage = "I'm sorry you're feeling this way. I'm here to listen if you'd like to talk about what's on your mind."; break;
             }
             addMessage(firstMessage, 'assistant');
             openChat();
         }
-
         if (letsTalkButton) letsTalkButton.addEventListener('click', () => startChatWithContext('general'));
         if (chatNavButton) chatNavButton.addEventListener('click', (e) => { e.preventDefault(); startChatWithContext('general'); });
         if (closeChatButton) closeChatButton.addEventListener('click', closeChat);
-
         if (chatForm) {
             chatForm.addEventListener('submit', async (event) => {
                 event.preventDefault();
@@ -335,19 +323,15 @@
                 }
             });
         }
-
         // --- WIDGETS AND MODALS LOGIC ---
         const journalModal = document.getElementById('journal-modal');
         const eventModal = document.getElementById('event-modal');
         function openModal(modal) { body.classList.add('modal-open'); }
         function closeModal(modal) { body.classList.remove('modal-open'); }
-        
-        // Meditation
         const meditationTimerDisplay = document.getElementById('meditation-timer');
         const startMeditationBtn = document.getElementById('start-meditation');
         const resetMeditationBtn = document.getElementById('reset-meditation');
         let meditationInterval, meditationSeconds = 300, isMeditating = false;
-        
         function updateMeditationTimer() {
             if(!meditationTimerDisplay) return;
             const minutes = Math.floor(meditationSeconds / 60).toString().padStart(2, '0');
@@ -386,13 +370,10 @@
                 startMeditationBtn.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
             });
         }
-
-        // Journaling
         const journalTextarea = document.getElementById('journal-textarea');
         const newJournalEntryBtn = document.getElementById('new-journal-entry');
         const closeJournalModalBtn = document.getElementById('close-journal-modal');
         const saveJournalEntryBtn = document.getElementById('save-journal-entry');
-        
         if (newJournalEntryBtn) newJournalEntryBtn.addEventListener('click', () => openModal(journalModal));
         if (closeJournalModalBtn) closeJournalModalBtn.addEventListener('click', () => closeModal(journalModal));
         if (saveJournalEntryBtn) saveJournalEntryBtn.addEventListener('click', () => {
@@ -406,8 +387,6 @@
             journalTextarea.value = '';
             closeModal(journalModal);
         });
-
-        // Hydration
         const hydrationCount = document.getElementById('hydration-count');
         const hydrationIncrement = document.getElementById('hydration-increment');
         const hydrationDecrement = document.getElementById('hydration-decrement');
@@ -427,8 +406,6 @@
                 }
             });
         }
-
-        // Mood Tracker
         const moodEmojis = document.querySelectorAll('.mood-emoji');
         moodEmojis.forEach(emoji => {
             emoji.addEventListener('click', () => {
@@ -438,8 +415,6 @@
                 emoji.classList.add('selected');
             });
         });
-
-        // Calendar
         const calendarGrid = document.getElementById('calendar-grid');
         const monthYearDisplay = document.getElementById('calendar-month-year');
         const eventList = document.getElementById('event-list');
@@ -455,9 +430,7 @@
         const saveEventBtn = document.getElementById('save-event');
         let currentDate = new Date();
         let events = JSON.parse(localStorage.getItem('thecarebud_events')) || {};
-
         function saveEvents() { localStorage.setItem('thecarebud_events', JSON.stringify(events)); }
-        
         function generateCalendar(date) {
             if(!calendarGrid) return;
             calendarGrid.innerHTML = '';
@@ -489,7 +462,6 @@
                 calendarGrid.appendChild(dayCell);
             }
         }
-
         function showEventsForDate(date) {
             if(!eventList) return;
             eventList.innerHTML = '';
@@ -507,7 +479,6 @@
                 eventList.innerHTML = `<p class="text-sm text-center text-text-light/60 dark:text-text-dark/60">No events for this day.</p>`;
             }
         }
-
         function openEventModal(date, event = null) {
             openModal(eventModal);
             eventDateInput.value = date;
@@ -519,7 +490,6 @@
                 deleteEventBtn.classList.add('hidden');
             }
         }
-    
         if(calendarPrevBtn) calendarPrevBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); generateCalendar(currentDate); });
         if(calendarNextBtn) calendarNextBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); generateCalendar(currentDate); });
         if(newEventBtn) newEventBtn.addEventListener('click', () => openEventModal(new Date().toISOString().split('T')[0]));
@@ -546,7 +516,6 @@
             generateCalendar(currentDate);
             showEventsForDate(date);
         });
-
         // Initial Load
         generateCalendar(currentDate);
         showEventsForDate(new Date().toISOString().split('T')[0]);
